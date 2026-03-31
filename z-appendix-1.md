@@ -813,3 +813,186 @@
      users to execute programs as another user, usually the superuser or
      root. It provides a more secure alternative to using sudo for
      running graphical applications with elevated privileges.
+
+---
+
+# New terms (all-features branch)
+
+166) SBOM (Software Bill of Materials):
+
+     An SBOM is a formal, machine-readable inventory of all software
+     components, libraries, and dependencies included in a software
+     artifact — in this context, a Linux ISO. SBOMs are used for
+     license compliance auditing, vulnerability scanning, and supply
+     chain transparency. eggs generates SBOMs in CycloneDX JSON format
+     using syft when the `--sbom` flag is passed to `eggs produce`.
+
+167) System Transparency (ST):
+
+     System Transparency is a security framework for servers and
+     appliances that provides cryptographically signed OS packages and
+     verifiable boot chains. An ST OS package contains a kernel,
+     initrd, a descriptor JSON with hashes, and an Ed25519 signature.
+     Firmware that implements ST verifies the signature before booting,
+     ensuring the OS has not been tampered with. eggs produces ST
+     packages via `eggs st package`.
+
+168) IPFS (InterPlanetary File System):
+
+     IPFS is a distributed, peer-to-peer protocol for storing and
+     sharing files. Content is addressed by its cryptographic hash
+     (CID) rather than by location, making it resilient to server
+     failures and censorship. eggs uses IPFS via brig to distribute
+     ISOs in a decentralized way (`eggs ipfs`).
+
+169) brig:
+
+     brig is a distributed, encrypted file synchronization tool built
+     on IPFS. It provides a familiar filesystem interface over IPFS,
+     making it practical to publish and retrieve large files like ISOs.
+     eggs uses brig as the default backend for `eggs ipfs`.
+
+170) CID (Content Identifier):
+
+     A CID is a self-describing content-addressed identifier used in
+     IPFS. It is derived from the cryptographic hash of the content,
+     so the same file always has the same CID regardless of where it
+     is stored.
+
+171) git-LFS (Git Large File Storage):
+
+     git-LFS is a git extension that stores large binary files (such
+     as ISOs) outside the main git repository while keeping lightweight
+     pointer files in the tree. This makes it practical to version and
+     distribute large files via git hosting services. eggs tracks
+     produced ISOs in git-LFS via `eggs lfs`.
+
+172) Waydroid:
+
+     Waydroid is a container-based approach to running a full Android
+     system on a Linux host. It uses Linux namespaces and a minimal
+     Android image to provide near-native Android performance. eggs
+     can produce Waydroid container snapshots via
+     `eggs android produce --mode=waydroid`.
+
+173) OTA (Over-The-Air):
+
+     In the Android context, OTA refers to a flashable zip package that
+     can be applied by a recovery environment (such as TWRP) to update
+     or replace the Android system. eggs produces OTA zips via
+     `eggs android produce --mode=ota`.
+
+174) DTB (Device Tree Blob):
+
+     A DTB is a compiled binary file that describes the hardware
+     topology of a system to the Linux kernel. It is required on ARM
+     and RISC-V systems where hardware is not self-describing (unlike
+     x86 PCI). eggs accepts a `--dtbdir` flag to include DTB files in
+     produced ISOs for ARM and RISC-V targets.
+
+175) RISC-V:
+
+     RISC-V is an open-standard instruction set architecture (ISA)
+     based on reduced instruction set computer (RISC) principles.
+     Unlike x86 and ARM, the RISC-V ISA is freely available without
+     licensing fees. eggs supports the `riscv64` architecture in the
+     `all-features` branch.
+
+176) Immutable Linux:
+
+     An immutable Linux distribution is one where the root filesystem
+     is read-only during normal operation. System updates are applied
+     atomically (often via A/B partition swaps or BTRFS snapshots)
+     rather than in-place, making the system more predictable and
+     easier to roll back. penguins-immutable-framework (PIF) provides
+     a unified interface over multiple immutability backends.
+
+177) Powerwash:
+
+     In the context of penguins-powerwash, a powerwash is a factory
+     reset operation that returns a Linux system to a clean state.
+     Modes range from soft (remove user data only) to hardware (wipe
+     all data including the bootloader).
+
+178) MCP (Model Context Protocol):
+
+     MCP is an open protocol that standardizes how AI agents expose
+     tools and resources to other AI systems. eggs-ai implements an
+     MCP server that exposes penguins-eggs knowledge as tools, allowing
+     AI agents like Cursor and Claude Desktop to query eggs commands,
+     configs, and troubleshooting information directly.
+
+179) LLM (Large Language Model):
+
+     An LLM is a machine learning model trained on large amounts of
+     text data that can generate, summarize, and reason about text.
+     eggs-ai uses LLMs from providers such as Gemini, OpenAI,
+     Anthropic, Mistral, Groq, and Ollama to power its AI assistant
+     features.
+
+180) Ollama:
+
+     Ollama is a tool for running LLMs locally on a personal computer
+     without sending data to external servers. eggs-ai supports Ollama
+     as a provider for fully offline AI assistance.
+
+181) BubbleTea:
+
+     BubbleTea is a Go framework for building terminal user interfaces
+     (TUIs). eggs-gui uses BubbleTea for its terminal frontend,
+     providing a keyboard-driven interface that works in any terminal
+     and over SSH.
+
+182) NodeGUI:
+
+     NodeGUI is a framework for building native desktop applications
+     using Node.js and Qt6. eggs-gui uses NodeGUI for its desktop
+     frontend, providing a native window with CSS styling.
+
+183) NiceGUI:
+
+     NiceGUI is a Python framework for building web-based user
+     interfaces. eggs-gui uses NiceGUI for its web frontend, providing
+     browser-based access to penguins-eggs — useful for headless or
+     remote machines.
+
+184) Spacemit K1:
+
+     The Spacemit K1 is an 8-core RISC-V SoC (RV64GCVB) used in the
+     MuseBook laptop and other RISC-V devices. It runs Bianbu Linux,
+     a Debian-based distribution. penguins-eggs is being ported to
+     this hardware in the `all-features` branch.
+
+185) Bianbu Linux:
+
+     Bianbu Linux is a Debian-based Linux distribution developed for
+     Spacemit K1 RISC-V hardware. It uses a 6-partition GPT layout
+     with U-Boot as the bootloader. The penguins-eggs MuseBook port
+     targets Bianbu Linux.
+
+186) abroot:
+
+     abroot is an immutability backend that uses A/B partition swaps
+     and OCI container images for atomic system updates. It is one of
+     the backends supported by penguins-immutable-framework.
+
+187) BTRFS:
+
+     BTRFS (B-Tree Filesystem) is a Linux filesystem with built-in
+     support for snapshots, subvolumes, and checksums. eggs uses BTRFS
+     snapshots (via `--snapshot`) to capture system state before and
+     after ISO builds. Several immutability backends in PIF also rely
+     on BTRFS.
+
+188) syft:
+
+     syft is an open-source tool by Anchore that generates SBOMs from
+     container images, filesystems, and archives. eggs uses syft to
+     generate SBOMs for produced ISOs when the `--sbom` flag is used.
+
+189) Ed25519:
+
+     Ed25519 is a public-key signature algorithm based on elliptic
+     curve cryptography. It is used by `eggs st` to sign System
+     Transparency OS packages, providing a compact and fast signature
+     that can be verified by ST-compatible firmware.

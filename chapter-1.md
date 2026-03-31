@@ -3,226 +3,233 @@
 # Chapter 1
 # What is penguins' eggs?
 
-eggs stands out as a versatile command-line tool, offering the
-capability to transform your existing distro into a redistributable live
-ISO image. Notably, the tool also extends its support to Debian/Ubuntu
-flavors, making it compatible with variations such as Xubuntu, Kubuntu,
-and beyond, in addition to Linux distributions derived from these, such
-as Devuan, Linux Mint. 
+eggs is a versatile command-line tool that transforms your existing Linux
+installation into a redistributable live ISO image. It supports Debian, Devuan,
+Ubuntu and their derivatives (Xubuntu, Kubuntu, Linux Mint, and more), as well
+as Arch Linux and Manjaro.
 
-Upon harnessing the power of Penguins' eggs, users gain the ability to fashion an
-installable live ISO embodying their Debian/Devuan/Ubuntu-based, Arch Linux, or 
-Manjaro system, complete with all installed applications and personalized
-configurations housed within the home folder.
+With penguins' eggs, you can create an installable live ISO of your system,
+complete with all installed applications and configurations. The tool also
+supports offline installation, scripting mode for automated ISO management,
+and full visual customization of the live environment and Calamares installer
+via [penguins-wardrobe](https://github.com/pieroproietti/penguins-wardrobe).
 
-eggs goes beyond creating live ISOs. It allows you to
-configure the generated ISO for offline installation, useful for
-environments without internet access. 
-
-It also offers a scripting mode for managing ISOs through custom scripts. 
-
-You can even personalize the look and feel of the live CD and Calamares installer with images. This
-customization power is driven by [penguins-wardrobe](https:github.com/piero.proietti/penguins-wardrobe), a repository
-that provides tools to tailor Linux systems, even for minimal
-command-line installations. 
-
-It lets you create customized live ISOs
-based on Debian, Ubuntu, and their derivatives. You can even use it to
-generate a complete backup of your existing Debian/Ubuntu system,
-including user data, all rolled into a bootable ISO. Using Penguins\'
-Eggs simplifies these tasks and gives you full control over the content
-and distribution of your custom Linux environments. To learn more,
-explore the official [Penguins' eggs website](https://penguins-eggs.net) and its community resources
-
-Penguins' eggs takes the complexity out of remastering
-Linux systems. It offers a user-friendly interface with powerful
-features, making customization and distribution a breeze. The tool works
-across various systems based on Debian, Devuan, Ubuntu, Arch Linux, and Manjaro.
-
-This means you can create live ISOs tailored to your specific needs, no
-matter your preferred base distro. Penguins' eggs also supports
-derivatives of these popular distributions, giving you even more
-options. Here's the real benefit: you can not only preserve your
-current system setup and applications but also easily share them with
-others. 
-
-Penguins' eggs cleverly removes user and system data from the
-ISOs it creates. This ensures a clean starting point for new users,
-while still allowing you to curate a unique Linux experience for them.
+The `all-features` branch expands penguins-eggs from a single remastering CLI
+into a full ecosystem: an AI assistant, a unified GUI, Android image production,
+ChromiumOS flavour support, RISC-V architecture, decentralized ISO distribution,
+security tooling, and a suite of companion tools for recovery, factory reset,
+immutable Linux, and kernel management.
 
 # Why penguins' eggs?
 
-eggs is a versatile tool that offers an array of features
-and benefits for Linux users. Whether you want to create an
-installable ISO from your current Linux system or explore various
-customization options, penguins-eggs has got you covered. To get
-started with penguins-eggs, you'll need to install it on your Linux
-distribution. The tool supports a wide range of Linux distributions
-and their major derivatives, including Arch, Debian, Devuan, Manjaro,
-Ubuntu, and more. Additionally, you can easily add support for
-additional derivatives, expanding the tool\'s capabilities even
-further.
+eggs gives Linux users a single tool to capture, customize, and distribute their
+system. Whether you want a clean redistributable ISO, a full clone with user
+data, or a crypted backup, eggs handles it. It supports a wide range of
+distributions and architectures, and its plugin and integration ecosystem means
+it can be extended to fit specialized workflows.
 
-# Top Penguins-eggs features
+# Top penguins-eggs features
 
-## fast and efficient
+## Fast and efficient
 
-eggs is designed to be fast and efficient. Unlike
-traditional methods that involve copying the entire file system,
-eggs utilizes livefs, which allows for instant acquisition
-of the live system. By default, the tool :
+eggs uses `livefs` for instant acquisition of the live system rather than
+copying the entire filesystem. By default it uses `zstd level 3` compression,
+which produces ISOs significantly faster than traditional `xz`-based tools while
+keeping file sizes reasonable.
 
-## Supports differents compression algorithm
+## Multiple compression algorithms
 
-Employs the compression algorithm, significantly reducing the time
-required for the process when creating an installable ISO.
+eggs supports several compression algorithms to suit different use cases:
 
-penguins-eggs with its innovative utilization of the `zstd level 3`
-compression algorithm as the default, is poised to revolutionize the
-realm of Linux distributions by redefining the parameters of speed and
-efficiency. This cutting-edge approach to compression stands as
-a testament to the relentless pursuit of optimization and performance
-enhancements, enabling users to experience unparalleled gains in speed
-and responsiveness.
+- **zstd level 3** (default) — fast builds, good compression ratio
+- **zstd pendrive** (`--pendrive`) — `zstd -b 1M -Xcompression-level 15`, optimized for USB drives
+- **xz standard** (`--standard`) — `xz -b 1M`, smaller ISOs at the cost of build time
+- **xz max** (`--max`) — `xz -Xbcj ...`, maximum compression for distribution
 
-## Supports Clone
+## Clone and crypted clone
 
-penguins-eggs provides various options to suit your needs. With
-the `--clone` flag, you can preserve the data and accounts of
-yours users, ensuring a seamless experience for users accessing
-the live system. Moreover, you can opt for a `--cryptedclone`, where
-user data and accounts are saved in an encrypted LUKS volume within the
-ISO image, enhancing security and privacy.
+eggs provides several options for including user data in the ISO:
 
-penguins-eggs Linux introduces a groundbreaking feature in the form
-of `--cryptedclone`, setting a new standard of security and data protection
-within the realm of Linux distributions. By default,
-penguins-eggs tool empowers users to safeguard their sensitive user
-data and accounts by encapsulating them within an encrypted LUKS
-(Linux Unified Key Setup) volume, seamlessly integrated within
-the ISO image.
+- **`--clone`** — preserves user data and accounts in the live system
+- **`--homecrypt`** (`-k`) — user data and accounts are saved in an encrypted LUKS volume within the ISO
+- **`--fullcrypt`** (`-f`) — full system encryption (available on Debian trixie/excalibur)
 
 ## Cuckoo and PXE boot
 
-In addition to ISO creation, penguins-eggs offers a unique feature
-called `cuckoo`. By starting `cuckoo` from the live system, you can set
-up a PXE boot server, making it accessible to all computers on the
-network. This functionality opens up possibilities for network
-booting and streamlined deployment. The activation of Cuckoo from
-live as the default setting within penguins-eggs heralds a
-transformative leap in the domain of Linux distributions, affording
-users the ability to harness the unparalleled potential of PXE booting
-and network wide deployment with ease.
+The `cuckoo` command starts a PXE boot server from the live system, making the
+live environment accessible to all computers on the local network. This enables
+network-wide deployment without physical media.
 
-## Supports Both TUI or GUI Installer
+## TUI and GUI installers
 
-To simplify the installation process, penguins-eggs provides its own
-system installer called `krill`. This installer is particularly useful
-when a GUI (Graphical User Interface) is not available, allowing
-for installation in various situations. However, if you are using a
-desktop system, penguins-eggs recommends and configures the
-calamares GUI installer, ensuring a seamless and user**-**friendly
-experience.
-
-penguins-eggs Linux spearheads a transformative revolution in the realm
-of system installation with the incorporation of its TUI
-(Text-based User Interface), setting a new standard of versatility and
-accessibility within the landscape of Linux distributions. The
-integration of these installation mechanisms underscores Penguins Eggs
-Linux's unwavering commitment to accommodating diverse user needs
-and streamlining installation workflows with unparalleled flexibility
-and user-centric design.
-
-## Repository lists
-
-One of the key advantages of penguins-eggs is its commitment to
-utilizing only the original distro's packages. This means that no
-modifications are made to your repository lists, ensuring a safe and
-reliable environment. penguins-eggs prioritizes maintaining the
-integrity and authenticity of your Linux distribution.
+eggs ships its own TUI installer called `krill`, useful when no graphical
+environment is available. For desktop systems, eggs configures the
+[Calamares](https://calamares.io/) GUI installer automatically.
 
 ## Wardrobe
 
-To enhance customization options, penguins-eggs introduces the
-concept of Wardrobe. With Wardrobe and its various components, such
-as costumes, you can easily organize and manage your customizations,
-samples, and more. This feature enables a streamlined and efficient
-workflow, allowing you to tailor your Linux system to your
-preferences.
+The Wardrobe system lets you organize and apply customizations — costumes,
+accessories, and themes — to tailor the live ISO and Calamares branding to
+specific needs. See Chapter 8 for the full Wardrobe guide.
 
-## Supporting Multiple Distributions
+## eggs love — the simplest way to get an egg
 
-Eggs supporting multiple distributions and their derivatives.
+`eggs love` is a one-command workflow that reads a `love.yaml` configuration
+file and runs the full sequence of eggs commands automatically. It is the
+fastest path from a running system to a finished ISO:
 
-**Supports**: Arch, Debian, Devuan, Manjaro, Ubuntu and major
-derivatives: Linuxmint, KDE neon, EndeavourOS, Garuda, etc. You can
-easily add more derivatives.
+```
+sudo eggs love
+```
 
-Arch Linux is a popular Linux distribution known for its simplicity,
-flexibility, and rolling release model. Unlike many distros that come
-pre-loaded with software, Arch starts with a minimal base system. This
-gives you complete control over what is installed, letting you build a
-system that perfectly suits your needs. This minimalist approach is
-ideal for users who want a clean and efficient system without any
-unnecessary extras. Arch\'s popularity has led to the creation of
-several derivative distributions, each with its take on the Arch
-philosophy. 
+Optional flags mirror those of `eggs produce`:
 
-Manjaro, for example, is a user-friendly version of Arch
-that offers easier installation, pre-configured desktops, and a
-graphical package manager for a smoother experience.
+```
+sudo eggs love --clone
+sudo eggs love --homecrypt
+sudo eggs love --fullcrypt
+sudo eggs love --dtbdir /path/to/dtbs
+```
 
-Debian derivatives is a godfather in the Linux world. 
+## Recovery tools integration
 
-This highly respected distro, known for its rock-solid stability, security, and
-dedication to free software, has been around since the early days.
-However, Debian\'s impact goes beyond its own desktop. It is the
-foundation for countless other distributions, including the ever-popular
-Ubuntu and its many offshoots. In short, Debian is a major reason why
-Linux is so diverse and successful today.
+The `--recovery` flag on `eggs produce` layers
+[penguins-recovery](https://github.com/Interested-Deving-1896/penguins-recovery)
+tools onto the produced ISO, turning it into a rescue medium without a separate
+build step:
 
-Ubuntu, is a giant in the Linux world, known for being easy to use. It
-comes in many flavors, each with a different desktop environment to suit
-your taste. The company behind Ubuntu, Canonical, is all about making
-Linux user-friendly and stable. They also heavily involve the community
-in development. This focus on users has made Ubuntu a favorite among all
-kinds of people looking for a polished and versatile Linux experience.
+```
+sudo eggs produce --recovery
+sudo eggs produce --recovery --recovery-gui=minimal
+sudo eggs produce --recovery --recovery-rescapp
+```
 
-Linux Mint is a popular Linux distro built on top of Ubuntu but with
-some key differences. Mint adds its features and a unique desktop
-environment, like Cinnamon or MATE, to provide a more polished and
-user-friendly experience right out of the box. This focus on user
-experience makes Mint a popular choice for people who want a Linux
-system that is easy to use and works well without a lot of tinkering.
+GUI profiles are `minimal`, `touch`, and `full`. The `--recovery-rescapp` flag
+adds the rescapp graphical rescue wizard.
 
-## Supports hardware architectures
+## ChromiumOS flavour support
 
-Supports a wide range of hardware architectures.
+When building on a ChromiumOS-based system, the `--cros-flavour` flag selects
+the browser to embed in the ISO:
 
-Supports: i386, amd64 and arm64 architecture, from old PCs, common PCs
-to single board computers like Raspberry Pi 4/5.
+```
+sudo eggs produce --cros-flavour=thorium
+sudo eggs produce --cros-flavour=brave
+sudo eggs produce --cros-flavour=chromium
+sudo eggs produce --cros-flavour=vanadium
+sudo eggs produce --cros-flavour=bromite
+sudo eggs produce --cros-flavour=cromite
+sudo eggs produce --cros-flavour=custom --cros-browser-repo=https://github.com/user/fork
+```
 
-The i386 architecture, originating from the Intel 80386 microprocessor,
-has long been a stalwart in the domain of personal computing.
-Initially serving as the cornerstone for many early PCs, the i386
-architecture laid the groundwork for the evolution of consumer computing
-devices, providing the processing power and framework for the burgeoning
-digital revolution.
+## Android image production
 
-In parallel to the x86**-**64 architecture, the arm64 architecture
-stands as a testament to the dynamism of computing, catering to a
-diverse array of devices, ranging from smartphones and tablets to
-embedded systems, IoT devices, and single**-**board computers.
+`eggs android produce` creates bootable Android images from a running Android
+environment. It auto-detects the environment and selects the appropriate output
+mode:
 
-## Supports privacy and security 
+| Mode | Output | Architectures |
+|------|--------|---------------|
+| `iso` | Bootable ISO | x86, x86_64, riscv64 |
+| `raw-img` | Raw disk image | arm64-v8a, armeabi-v7a |
+| `waydroid` | Waydroid container snapshot | any |
+| `ota` | OTA flashable zip | any |
 
-Safe: Penguins Eggs Linux embarks on a steadfast commitment to user
-security and system integrity through its default practice of
-exclusively utilizing original distributions' packages without any
-modifications in the repository lists.
+```
+sudo eggs android produce
+sudo eggs android produce --mode=iso --compression=zstd
+sudo eggs android produce --mode=waydroid
+sudo eggs android status
+```
 
-# More informations
-Yuo can fine more information on [CHANGELOG](https://github.com/pieroproietti/penguins-eggs/blob/master/CHANGELOG.md#changelog) 
-on the [penguins-eggs repository](https://github.com/pieroproietti/penguins-eggs).
+See Chapter 13 for the full Android guide.
+
+## AI assistant (eggs-ai)
+
+[eggs-ai](https://github.com/Interested-Deving-1896/eggs-ai) is an AI agent
+that understands penguins-eggs commands, configurations, and workflows. It
+provides diagnostics, guided ISO building, config generation, Calamares
+assistance, and general Q&A. It supports 7 LLM providers including local Ollama
+for fully offline operation, and exposes an MCP server for integration with
+Cursor, Claude Desktop, and other AI agents. See Chapter 11.
+
+## Unified GUI (eggs-gui)
+
+[eggs-gui](https://github.com/Interested-Deving-1896/eggs-gui) is a unified
+graphical frontend for penguins-eggs with three interface options:
+
+- **BubbleTea TUI** (Go) — terminal power users and SSH sessions
+- **NodeGUI desktop** (Qt6/TypeScript) — native desktop application
+- **NiceGUI web** (Python) — browser-based remote access
+
+All frontends share a single Go daemon backend. See Chapter 12.
+
+## Distribution and security tooling
+
+The `all-features` branch adds three commands for ISO distribution and security:
+
+- **`eggs lfs`** — manages git-LFS tracking for produced ISOs (track, list, setup, enable, disable)
+- **`eggs ipfs`** — publishes ISOs to IPFS via [brig](https://github.com/sahib/brig) (publish, list, get, gateway, history)
+- **`eggs st`** — produces [System Transparency](https://system-transparency.org/) compatible boot artifacts with Ed25519 signing (package, keygen, verify, extract)
+
+The `--sbom` flag on `eggs produce` generates a Software Bill of Materials for
+the produced ISO using [syft](https://github.com/anchore/syft).
+
+See Chapter 15 for full details.
+
+## Companion ecosystem
+
+The `all-features` branch integrates four companion tools:
+
+- **[penguins-recovery](https://github.com/Interested-Deving-1896/penguins-recovery)** — unified rescue toolkit supporting 6 distro families
+- **[penguins-powerwash](https://github.com/Interested-Deving-1896/penguins-powerwash)** — factory reset with soft/medium/hard/sysprep/hardware modes
+- **[penguins-immutable-framework](https://github.com/Interested-Deving-1896/penguins-immutable-framework)** — immutable Linux framework (abroot, ashos, frzr, akshara, btrfs-dwarfs backends)
+- **[penguins-kernel-manager](https://github.com/Interested-Deving-1896/penguins-kernel-manager)** — full kernel lifecycle management across all major distributions
+
+See Chapter 14 for the full integrations guide.
+
+## Supporting multiple distributions
+
+eggs supports the following distributions and their major derivatives:
+
+| Base | Distributions |
+|------|--------------|
+| Arch | Arch Linux, EndeavourOS, Garuda, Manjaro, BigLinux, CachyOS |
+| Debian | Debian, Devuan, Ubuntu, Linux Mint, LMDE, MX Linux, Zorin, Pop!_OS, elementary |
+| Ubuntu | Kubuntu, Xubuntu, Lubuntu, Ubuntu MATE, KDE neon |
+
+Additional derivatives can be added by extending the distro detection logic.
+
+## Supported hardware architectures
+
+eggs supports the following CPU architectures:
+
+| Architecture | Description |
+|---|---|
+| `i386` | 32-bit x86, legacy PCs |
+| `amd64` | 64-bit x86, standard PCs and servers |
+| `arm64` | 64-bit ARM, Raspberry Pi 4/5 and other SBCs |
+| `riscv64` | RISC-V, e.g. MuseBook (Spacemit K1) |
+
+For ARM and RISC-V targets, the `--dtbdir` flag specifies the path to Device
+Tree Blob (DTB) files required for hardware initialization:
+
+```
+sudo eggs produce --dtbdir /path/to/dtbs
+```
+
+See Chapter 16 for the RISC-V / MuseBook port.
+
+## Repository integrity
+
+eggs uses only the original distribution's packages and makes no modifications
+to repository lists, preserving the integrity and authenticity of the base
+system.
+
+# More information
+
+- [CHANGELOG](https://github.com/pieroproietti/penguins-eggs/blob/master/CHANGELOG.md)
+- [penguins-eggs repository](https://github.com/pieroproietti/penguins-eggs)
+- [penguins-eggs website](https://penguins-eggs.net)
 
 ![](media/chapter-1/penguins-eggs-net.png)
